@@ -14,6 +14,8 @@ inputs:
     description: Optional pre-existing Docker image to use
   region:
     description: Region to launch the app in (alternatively, set the env FLY_REGION)
+  config:
+    description: Path to custom Fly toml config. Name option will override `name` in the config.
   org:
     description: Organization to launch the app in (alternatively, set the env FLY_ORG)
   path:
