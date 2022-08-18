@@ -43,9 +43,9 @@ if ! flyctl status --app "$app"; then
     echo "Importing secrets..."
     echo $secrets | tr " " "\n" | flyctl secrets import --app "$app"
   fi
-  flyctl deploy --config "$config" --app "$app" --region "$region" --image "$image" --region "$region" --strategy immediate
+  flyctl deploy --remote-only --config "$config" --app "$app" --region "$region" --image "$image" --region "$region" --strategy immediate
 elif [ "$INPUT_UPDATE" != "false" ]; then
-  flyctl deploy --config "$config" --app "$app" --region "$region" --image "$image" --region "$region" --strategy immediate
+  flyctl deploy --remote-only --config "$config" --app "$app" --region "$region" --image "$image" --region "$region" --strategy immediate
 fi
 
 # Attach postgres cluster to the app if specified.
