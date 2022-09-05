@@ -13,6 +13,17 @@ if [ -z "$PR_NUMBER" ]; then
   exit 1
 fi
 
+flyctl_deploy() {
+  flyctl deploy \
+    --app "$app" \
+    --config "$config" \
+    --image "$image" \
+    --region "$region" \
+    --region "$region" \
+    --remote-only \
+    --strategy immediate
+}
+
 REPO_OWNER=$(jq -r .event.base.repo.owner /github/workflow/event.json)
 REPO_NAME=$(jq -r .event.base.repo.name /github/workflow/event.json)
 EVENT_TYPE=$(jq -r .action /github/workflow/event.json)
@@ -43,9 +54,9 @@ if ! flyctl status --app "$app"; then
     echo "Importing secrets..."
     echo $secrets | tr " " "\n" | flyctl secrets import --app "$app"
   fi
-  flyctl deploy --remote-only --config "$config" --app "$app" --region "$region" --image "$image" --region "$region" --strategy immediate
+  flyctl_deploy
 elif [ "$INPUT_UPDATE" != "false" ]; then
-  flyctl deploy --remote-only --config "$config" --app "$app" --region "$region" --image "$image" --region "$region" --strategy immediate
+  flyctl_deploy
 fi
 
 # Attach postgres cluster to the app if specified.
