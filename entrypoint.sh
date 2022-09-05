@@ -29,7 +29,7 @@ flyctl_secrets_import() {
     echo "Importing secrets..."
     echo "$secrets" | \
       tr " " "\n" | \
-      flyctl secrets import --app "$app"
+      flyctl secrets import --app "$app" "$@"
   fi
 }
 
@@ -62,6 +62,7 @@ if ! flyctl status --app "$app"; then
   flyctl_secrets_import
   flyctl_deploy
 elif [ "$INPUT_UPDATE" != "false" ]; then
+  flyctl_secrets_import --stage
   flyctl_deploy
 fi
 
