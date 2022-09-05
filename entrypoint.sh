@@ -24,6 +24,15 @@ flyctl_deploy() {
     --strategy immediate
 }
 
+flyctl_secrets_import() {
+  if [ -n "$secrets" ]; then
+    echo "Importing secrets..."
+    echo "$secrets" | \
+      tr " " "\n" | \
+      flyctl secrets import --app "$app"
+  fi
+}
+
 REPO_OWNER=$(jq -r .event.base.repo.owner /github/workflow/event.json)
 REPO_NAME=$(jq -r .event.base.repo.name /github/workflow/event.json)
 EVENT_TYPE=$(jq -r .action /github/workflow/event.json)
@@ -50,10 +59,7 @@ fi
 # Deploy the Fly app, creating it first if needed.
 if ! flyctl status --app "$app"; then
   flyctl launch --no-deploy --copy-config --name "$app" --image "$image" --region "$region" --org "$org"
-  if [ -n "$secrets" ]; then
-    echo "Importing secrets..."
-    echo $secrets | tr " " "\n" | flyctl secrets import --app "$app"
-  fi
+  flyctl_secrets_import
   flyctl_deploy
 elif [ "$INPUT_UPDATE" != "false" ]; then
   flyctl_deploy
